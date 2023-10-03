@@ -1,7 +1,9 @@
-import { Grid } from "@mui/material";
+import { Grid, Pagination } from "@mui/material";
 import CharacterCard from "./CharacterCard";
 import axios from "axios";
-import { useInfiniteQuery } from "react-query";
+import { useQuery } from "react-query";
+import GapBar from "./GapBar";
+import { useState } from "react";
 type Type = {
   id: number;
   name: string;
@@ -23,19 +25,20 @@ type Type = {
   created: string;
 };
 const Characters = () => {
-  const request = (page: number=1) => {
-    return axios.get(`https://rickandmortyapi.com/api/character/?page=${page}`);
-  };
-  const { data } = useInfiniteQuery(["character"], () => request, {
-    cacheTime: Infinity,
-    staleTime: Infinity,
-    getNextPageParam: (_lastPage, Pages) => {
-      if (Pages.length < 42) {
-        return Pages.length + 1;
-      } else return undefined;
-    },
-  });
-  console.log(data?.pages);
+  const [currentPage, setCurrentPage] = useState(1);
+  const { data } = useQuery(
+    ["character", currentPage],
+    () =>
+      axios.get(
+        `https://rickandmortyapi.com/api/character/?page=${currentPage}`
+      ),
+    {
+      cacheTime: Infinity,
+      staleTime: Infinity,
+      keepPreviousData: true,
+    }
+  );
+  console.log(data?.data);
   return (
     <Grid container gap={4} justifyContent={"center"}>
       {data?.data.results.map((result: Type) => (
@@ -55,6 +58,19 @@ const Characters = () => {
           url={result.url}
         />
       ))}
+      <Grid container xs={12} justifyContent={"center"}>
+        <Pagination
+          count={42}
+          defaultPage={1}
+          variant="outlined"
+          color="primary"
+          onChange={(_e, page: number) => {
+            setCurrentPage(page);
+            window.scrollTo(0, 0);
+          }}
+        />
+      </Grid>
+      <GapBar />
     </Grid>
   );
 };

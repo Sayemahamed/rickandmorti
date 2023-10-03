@@ -6,26 +6,7 @@ import {
   CardMedia,
   Typography,
 } from "@mui/material";
-type Type = {
-  id: number;
-  name: string;
-  status: string;
-  species: string;
-  type: string;
-  gender: string;
-  origin: {
-    name: string;
-    url: string;
-  };
-  location: {
-    name: string;
-    url: string;
-  };
-  image: string;
-  episode: string[];
-  url: string;
-  created: string;
-};
+import { Type } from "./DataType/Type.ts";
 const CharacterCard = (prop: Type) => {
   const { image, name, status, gender, type, species, origin: ori } = prop;
   return (

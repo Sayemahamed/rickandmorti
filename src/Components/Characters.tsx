@@ -1,31 +1,27 @@
 import { Grid, Pagination } from "@mui/material";
 import CharacterCard from "./CharacterCard";
 import axios from "axios";
+import { useSearchParams } from "react-router-dom";
 import { useQuery } from "react-query";
 import GapBar from "./GapBar";
-import { useState } from "react";
-type Type = {
-  id: number;
-  name: string;
-  status: string;
-  species: string;
-  type: string;
-  gender: string;
-  origin: {
-    name: string;
-    url: string;
-  };
-  location: {
-    name: string;
-    url: string;
-  };
-  image: string;
-  episode: string[];
-  url: string;
-  created: string;
-};
+import { useEffect, useState } from "react";
+import { Type } from "./DataType/Type.ts";
+
 const Characters = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [URL, setURL] = useSearchParams();
+  console.log(Number(URL.get("page")));
+  useEffect(() => {
+    if (
+      typeof Number(URL.get("page")) === "number" &&
+      Number(URL.get("page")) != 0
+    )
+      setCurrentPage(Number(URL.get("page")));
+    else {
+      setCurrentPage(1);
+      setURL({ page: "1" });
+    }
+  }, [URL, setURL]);
   const { data } = useQuery(
     ["character", currentPage],
     () =>
@@ -38,7 +34,6 @@ const Characters = () => {
       keepPreviousData: true,
     }
   );
-  console.log(data?.data);
   return (
     <Grid container gap={4} justifyContent={"center"}>
       {data?.data.results.map((result: Type) => (
@@ -58,14 +53,14 @@ const Characters = () => {
           url={result.url}
         />
       ))}
-      <Grid container xs={12} justifyContent={"center"}>
+      <Grid container justifyContent={"center"}>
         <Pagination
           count={42}
-          defaultPage={1}
+          page={currentPage}
           variant="outlined"
           color="primary"
           onChange={(_e, page: number) => {
-            setCurrentPage(page);
+            setURL({ page: `${page}` });
             window.scrollTo(0, 0);
           }}
         />

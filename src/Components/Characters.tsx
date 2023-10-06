@@ -1,4 +1,4 @@
-import { Grid, Pagination } from "@mui/material";
+import { Grid, Pagination, TextField } from "@mui/material";
 import CharacterCard from "./CharacterCard";
 import axios from "axios";
 import { useSearchParams } from "react-router-dom";
@@ -47,6 +47,16 @@ const Characters = () => {
   }, [data]);
   return (
     <Grid container gap={4} justifyContent={"center"}>
+      <Grid container justifyContent={"center"} mt={2}>
+        <TextField
+          variant="standard"
+          sx={{ width: 400 }}
+          label="Search by name"
+          onChange={(_e) =>
+            setURL({ page: `${1}`, name: `${_e.target.value}` })
+          }
+        />
+      </Grid>
       {data?.data.results.map((result: Type) => (
         <CharacterCard
           key={result.id}

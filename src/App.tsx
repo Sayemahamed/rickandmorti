@@ -1,5 +1,6 @@
 import { QueryClientProvider, QueryClient } from "react-query";
 import { Routes, Route } from "react-router-dom";
+import { ReactQueryDevtools } from "react-query/devtools";
 import Navbar from "./Components/Navbar";
 import Episodes from "./Components/Episodes";
 import Characters from "./Components/Characters";
@@ -18,6 +19,7 @@ const App = () => {
         <Route path="/episodes" element={<Episodes />}></Route>
         <Route path="/locations" element={<Locations />}></Route>
       </Routes>
+      <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
     </QueryClientProvider>
   );
 };

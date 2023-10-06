@@ -8,10 +8,17 @@ import { useEffect, useState } from "react";
 import { Type } from "./DataType/Type.ts";
 
 const Characters = () => {
+  const [characterName, setCharacterName] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(4);
   const [URL, setURL] = useSearchParams();
-  console.log(Number(URL.get("page")));
   useEffect(() => {
+    if (
+      typeof URL.get("name") === "string" &&
+      String(URL.get("name")).length > 0
+    ) {
+      setCharacterName(String(URL.get("name")));
+    }
     if (
       typeof Number(URL.get("page")) === "number" &&
       Number(URL.get("page")) != 0
@@ -19,14 +26,15 @@ const Characters = () => {
       setCurrentPage(Number(URL.get("page")));
     else {
       setCurrentPage(1);
-      setURL({ page: "1" });
+      setURL({ page: "1", name: characterName });
     }
   }, [URL, setURL]);
+  console.log(characterName);
   const { data } = useQuery(
-    ["character", currentPage],
+    ["character", currentPage, characterName],
     () =>
       axios.get(
-        `https://rickandmortyapi.com/api/character/?page=${currentPage}`
+        `https://rickandmortyapi.com/api/character/?page=${currentPage}&name=${characterName}`
       ),
     {
       cacheTime: Infinity,
@@ -34,6 +42,9 @@ const Characters = () => {
       keepPreviousData: true,
     }
   );
+  useEffect(() => {
+    setTotalPages(data?.data.info.pages);
+  }, [data]);
   return (
     <Grid container gap={4} justifyContent={"center"}>
       {data?.data.results.map((result: Type) => (
@@ -55,12 +66,12 @@ const Characters = () => {
       ))}
       <Grid container justifyContent={"center"}>
         <Pagination
-          count={42}
+          count={totalPages}
           page={currentPage}
           variant="outlined"
           color="primary"
           onChange={(_e, page: number) => {
-            setURL({ page: `${page}` });
+            setURL({ page: `${page}`, name: `${characterName}` });
             window.scrollTo(0, 0);
           }}
         />

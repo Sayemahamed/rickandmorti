@@ -12,8 +12,8 @@ const firebaseConfig = {
   storageBucket: "rickandmortii.appspot.com",
   messagingSenderId: "641283146643",
   appId: "1:641283146643:web:df715f243765fc66cf5e66",
-  measurementId: "G-X67KBFV88X"
+  measurementId: "G-X67KBFV88X",
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+export const app = initializeApp(firebaseConfig);
